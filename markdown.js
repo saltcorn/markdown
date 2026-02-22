@@ -1,5 +1,6 @@
-const { textarea, text } = require("@saltcorn/markup/tags");
+const { textarea, text, script, domReady } = require("@saltcorn/markup/tags");
 const iterator = require("markdown-it-for-inline");
+const markdownItMermaid = require("markdown-it-mermaid");
 
 const md = require("markdown-it")().use(
   iterator,
@@ -7,14 +8,33 @@ const md = require("markdown-it")().use(
   "link_open",
   function (tokens, idx) {
     tokens[idx].attrPush(["rel", "nofollow"]);
-  }
+  },
 );
+const md_mermaid = require("markdown-it")()
+  .use(iterator, "nofollow_links", "link_open", function (tokens, idx) {
+    tokens[idx].attrPush(["rel", "nofollow"]);
+  })
+  .use(markdownItMermaid.default);
 
 const markdown = {
   name: "Markdown",
   sql_name: "text",
   fieldviews: {
-    showAll: { isEdit: false, run: (v) => md.render(v || "") },
+    showAll: {
+      isEdit: false,
+      configFields: [
+        { name: "mermaid", label: "Render mermaid diagrams", type: "Bool" },
+      ],
+      run: (v, _req, attr) =>
+        attr?.mermaid
+          ? md_mermaid.render(v || "") +
+            script(
+              domReady(
+                `ensure_script_loaded("/static_assets/"+_sc_version_tag+"/mermaid.min.js")`,
+              ),
+            )
+          : md.render(v || ""),
+    },
     peek: {
       isEdit: false,
       run: (v) => text(v && v.length > 10 ? v.substring(0, 10) : v || ""),
@@ -29,7 +49,7 @@ const markdown = {
             id: `input${text(nm)}`,
             rows: 10,
           },
-          text(v) || ""
+          text(v) || "",
         ),
     },
   },

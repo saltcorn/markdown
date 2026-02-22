@@ -6,7 +6,8 @@
   "dependencies": {
     "@saltcorn/markup": "^0.0.8",
     "markdown-it": "10.0.0",
-    "markdown-it-for-inline": "0.1.1"
+    "markdown-it-for-inline": "0.1.1",
+    "markdown-it-mermaid": "0.2.5"
   },
   "author": "Tom Nielsen",
   "license": "MIT",
