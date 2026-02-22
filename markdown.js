@@ -66,7 +66,18 @@ const markdown = {
 const render_markdown = {
   type: "String",
   handlesTextStyle: true,
-  run: (v) => md.render(v || ""),
+  configFields: [
+    { name: "mermaid", label: "Render mermaid diagrams", type: "Bool" },
+  ],
+  run: (v, _req, attr) =>
+    attr?.mermaid
+      ? md_mermaid.render(v || "") +
+        script(
+          domReady(
+            `ensure_script_loaded("/static_assets/"+_sc_version_tag+"/mermaid.min.js")`,
+          ),
+        )
+      : md.render(v || ""),
 };
 
 module.exports = {
