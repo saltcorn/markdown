@@ -30,7 +30,11 @@ const markdown = {
           ? md_mermaid.render(v || "") +
             script(
               domReady(
-                `ensure_script_loaded("/static_assets/"+_sc_version_tag+"/mermaid.min.js")`,
+                `$(".mermaid:not([data-processed])").each(function(){
+              const $e = $(this)
+              $e.attr("mm-src", $e.text())
+            });
+            ensure_script_loaded("/static_assets/"+_sc_version_tag+"/mermaid.min.js")`,
               ),
             )
           : md.render(v || ""),
@@ -74,7 +78,11 @@ const render_markdown = {
       ? md_mermaid.render(v || "") +
         script(
           domReady(
-            `ensure_script_loaded("/static_assets/"+_sc_version_tag+"/mermaid.min.js")`,
+            `$(".mermaid:not([data-processed])").each(function(){
+              const $e = $(this)
+              $e.attr("mm-src", $e.text())
+            })
+            ensure_script_loaded("/static_assets/"+_sc_version_tag+"/mermaid.min.js")`,
           ),
         )
       : md.render(v || ""),
